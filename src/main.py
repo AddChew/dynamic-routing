@@ -9,11 +9,14 @@ from tortoise.exceptions import IntegrityError
 from tortoise.contrib.fastapi import register_tortoise
 
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Form
 from src.auth import authenticate_user, create_access_token, pwd_context, get_current_user
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Form, UploadFile, File
 
 
-app = FastAPI()
+app = FastAPI(
+    title = "Dynamic Routing",
+    description = "API Documentation for Dynamic Routing Service.",
+)
 auth_router = APIRouter(
     prefix = "/auth",
     tags = ["Authentication"]
@@ -58,13 +61,35 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
 
 
 @proj_router.get("/")
-async def read_projects(username: str, current_user: Annotated[User, Depends(get_current_user)]) -> List[Project]:
-    if username != current_user.username:
-        raise HTTPException(
-            status_code = status.HTTP_401_UNAUTHORIZED,
-            detail = "Insufficient permissions."
+async def read_projects(current_user: Annotated[User, Depends(get_current_user)]) -> List[Project]:
+    projects = await current_user.projects.all()
+    return [Project.from_tortoise_orm(project) for project in projects]
+
+
+@proj_router.post("/")
+async def create_project(
+    project_name: Annotated[str, Form()], 
+    project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")], 
+    current_user: Annotated[User, Depends(get_current_user)]
+    ):
+    try:
+        project = await Projects.create(
+            name = project_name,
+            owner = current_user
         )
-    return await current_user.projects.all()
+    
+    except IntegrityError:
+        raise HTTPException(
+            status_code = status.HTTP_409_CONFLICT,
+            detail = "Project already exists."
+        )
+
+    # TODO: file upload, save file to /<username>/<project>/app.py
+    # TODO: create necessary folder and files for user and project
+    # module = import_module(f"src.users.{username}.{project}.app")
+    # app.mount(f"/{username}/{project}", module.app)
+
+    return await Project.from_tortoise_orm(project)
 
 
 app.include_router(auth_router)
@@ -76,13 +101,6 @@ register_tortoise(
     generate_schemas = True,
     add_exception_handlers = True,
 )
-    
-
-# @proj_router.post("/")
-# async def create_project(username, project):
-#     module = import_module(f"src.users.{username}.{project}.app")
-#     app.mount(f"/{username}/{project}", module.app)
-#     return f"create {username} project {project}!"
 
 
 # @proj_router.put("/{project}")
