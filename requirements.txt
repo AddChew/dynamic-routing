@@ -1,5 +1,6 @@
 passlib==1.7.4
 uvicorn==0.25.0
 fastapi==0.105.0
+python-multipart==0.0.6
 tortoise-orm[asyncpg]==0.20.0
 python-jose[cryptography]==3.3.0
