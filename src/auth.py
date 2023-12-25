@@ -1,11 +1,12 @@
+from src.schemas import User
 from src.models import Users
 from typing import Annotated
-from jose import jwt, JWTError
 
+from jose import jwt, JWTError
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from fastapi.security import OAuth2PasswordBearer
 
+from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, status
 
 
@@ -19,7 +20,7 @@ pwd_context = CryptContext(
     deprecated = "auto"
 )
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl = "login"
+    tokenUrl = "auth/login"
 )
 
 
@@ -42,7 +43,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends()]):
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code = status.HTTP_401_UNAUTHORIZED,
         detail = "Invalid credentials."
@@ -62,3 +63,4 @@ async def get_current_user(token: Annotated[str, Depends()]):
     if user is None:
         raise credentials_exception
     return user
+    # return await User.from_tortoise_orm(user)
