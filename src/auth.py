@@ -1,4 +1,3 @@
-from src.schemas import User
 from src.models import Users
 from typing import Annotated
 
@@ -63,4 +62,3 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     if user is None:
         raise credentials_exception
     return user
-    # return await User.from_tortoise_orm(user)
