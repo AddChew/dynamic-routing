@@ -57,14 +57,14 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
     }
 
 
-@proj_router.get("/") # TODO: fix me
+@proj_router.get("/")
 async def read_projects(username: str, current_user: Annotated[User, Depends(get_current_user)]) -> List[Project]:
     if username != current_user.username:
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
             detail = "Insufficient permissions."
         )
-    return current_user.projects
+    return await current_user.projects.all()
 
 
 app.include_router(auth_router)
