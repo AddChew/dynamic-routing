@@ -10,4 +10,4 @@ class Users(models.Model):
 class Projects(models.Model):
     id = fields.IntField(pk = True)
     name = fields.CharField(max_length = 50)
-    owner = fields.ForeignKeyField(model_name = Users, related_name = "projects")
+    owner = fields.ForeignKeyField(model_name = "models.Users", related_name = "projects")
