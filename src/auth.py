@@ -42,19 +42,25 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(username: str, token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code = status.HTTP_401_UNAUTHORIZED,
         detail = "Invalid credentials."
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
-        username = payload.get("sub")
-        if username is None:
+        token_username = payload.get("sub")
+        if token_username is None:
             raise credentials_exception
         
     except JWTError:
         raise credentials_exception
+    
+    if username != token_username:
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "Insufficient permissions."
+        )
     
     user = await Users.get_or_none(
         username = username
