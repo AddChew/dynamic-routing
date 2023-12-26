@@ -1,15 +1,21 @@
 from tortoise import Tortoise
 from pydantic import BaseModel
+from tortoise.contrib.pydantic import pydantic_model_creator
 
 from src.models import Users, Projects
-from tortoise.contrib.pydantic import pydantic_model_creator
 
 
 class Message(BaseModel):
+    """
+    Message pydantic model.
+    """
     detail: str
 
 
 class Token(BaseModel):
+    """
+    Token pydantic model.
+    """
     access_token: str
     token_type: str
 
