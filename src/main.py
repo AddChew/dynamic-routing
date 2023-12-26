@@ -193,3 +193,7 @@ register_tortoise(
 )
 
 # TODO: logic to mount and regenerate all the endpoints when app restarts
+# TODO: pytest unittests
+# TODO: migrate to postgres from sqlite
+# TODO: setup docker and docker compose
+# TODO: update readme
