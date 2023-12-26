@@ -40,12 +40,13 @@ def create_project(username: str, project_name: str):
 
 
 async def save_file(username: str, project_name: str, file: UploadFile):
-    """_summary_
+    """
+    Save uploaded file to disk.
 
     Args:
-        username (str): _description_
-        project_name (str): _description_
-        file (UploadFile): _description_
+        username (str): Username of project owner.
+        project_name (str): Name of project.
+        file (UploadFile): Uploaded file.
     """
     save_path = os.path.join(USERS_DIR, username, project_name, "app.py")
     async with aiofiles.open(save_path, "wb") as f:
