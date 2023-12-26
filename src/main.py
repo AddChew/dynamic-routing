@@ -54,7 +54,7 @@ async def register(username: Annotated[str, Form()], password: Annotated[str, Fo
 @auth_router.post("/login", include_in_schema = False)
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     user = await authenticate_user(
-        username = form_data.username, 
+        username = form_data.username,
         password = form_data.password
     )
     if user is None:
@@ -77,8 +77,8 @@ async def read_projects(current_user: Annotated[User, Depends(get_current_user)]
 
 @proj_router.post("/")
 async def create_project(
-    project_name: Annotated[str, Form()], 
-    project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")], 
+    project_name: Annotated[str, Form()],
+    project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")],
     current_user: Annotated[User, Depends(get_current_user)]
     ) -> Project:
     try:
@@ -86,13 +86,13 @@ async def create_project(
             name = project_name,
             owner = current_user
         )
-    
+
     except IntegrityError:
         raise HTTPException(
             status_code = status.HTTP_409_CONFLICT,
             detail = "Project already exists."
         )
-    
+
     username = current_user.username
 
     proj.create_project(
@@ -102,7 +102,7 @@ async def create_project(
 
     await proj.save_file(
         username = username,
-        project_name = project_name, 
+        project_name = project_name,
         file = project_script,
     )
 
@@ -114,15 +114,15 @@ async def create_project(
 
 @proj_router.put("/{project_name}")
 async def update_project(
-    project: Annotated[Project, Depends(proj.get_project)], 
-    project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")], 
+    project: Annotated[Project, Depends(proj.get_project)],
+    project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")],
     ) -> Project:
     username = project.owner.username
     project_name = project.name
 
     await proj.save_file(
         username = username,
-        project_name = project_name, 
+        project_name = project_name,
         file = project_script,
     )
 

@@ -1,5 +1,5 @@
-from tortoise import Tortoise
 from pydantic import BaseModel
+from tortoise import Tortoise
 from tortoise.contrib.pydantic import pydantic_model_creator
 
 from src.models import Users, Projects

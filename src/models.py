@@ -10,6 +10,9 @@ class Users(models.Model):
     hashed_password = fields.CharField(max_length = 255)
 
     class PydanticMeta:
+        """
+        Metadata for pydantic model.
+        """
         exclude = ["id", "hashed_password"]
 
 
@@ -22,4 +25,7 @@ class Projects(models.Model):
     owner = fields.ForeignKeyField(model_name = "models.Users", related_name = "projects")
 
     class PydanticMeta:
+        """
+        Metadata for pydantic model.
+        """
         exclude = ["id"]
