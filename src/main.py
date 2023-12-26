@@ -1,13 +1,14 @@
 import os
 
+from src import projects
 from typing import Annotated, List
 from importlib import import_module
-from src.models import Users, Projects
 
+from src.models import Users, Projects
 from src.schemas import Token, User, Project
 from tortoise.exceptions import IntegrityError
-from tortoise.contrib.fastapi import register_tortoise
 
+from tortoise.contrib.fastapi import register_tortoise
 from fastapi.security import OAuth2PasswordRequestForm
 from src.auth import authenticate_user, create_access_token, pwd_context, get_current_user
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Form, UploadFile, File
@@ -83,11 +84,22 @@ async def create_project(
             status_code = status.HTTP_409_CONFLICT,
             detail = "Project already exists."
         )
+    
+    username = current_user.username
 
-    # TODO: file upload, save file to /<username>/<project>/app.py
-    # TODO: create necessary folder and files for user and project
-    # module = import_module(f"src.users.{username}.{project}.app")
-    # app.mount(f"/{username}/{project}", module.app)
+    projects.create_project(
+        username = username,
+        project_name = project_name
+    )
+
+    await projects.save_file(
+        username = username,
+        project_name = project_name, 
+        file = project_script,
+    )
+
+    module = import_module(f"src.users.{username}.{project_name}.app")
+    app.mount(f"/{username}/{project_name}", module.app)
 
     return await Project.from_tortoise_orm(project)
 
@@ -102,7 +114,6 @@ register_tortoise(
     add_exception_handlers = True,
 )
 
-
 # @proj_router.put("/{project}")
 # async def update_project(username, project):
 #     return f"update {username} project {project}!"
@@ -111,3 +122,5 @@ register_tortoise(
 # @proj_router.delete("/{project}")
 # async def delete_project(username, project):
 #     return f"delete {username} project {project}!"
+
+# TODO: logic to mount and regnerate all the endponts when app restarts
