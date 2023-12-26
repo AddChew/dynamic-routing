@@ -1,7 +1,12 @@
 import os
 import aiofiles
 
-from fastapi import UploadFile
+from src.schemas import User
+from typing import Annotated
+from src.models import Projects
+
+from src.auth import get_current_user
+from fastapi import UploadFile, Depends, HTTPException, status
 
 
 USERS_DIR = os.path.join(os.path.abspath(os.path.dirname(os.path.abspath(__file__))), "users")
@@ -31,3 +36,17 @@ async def save_file(username: str, project_name: str, file: UploadFile):
     async with aiofiles.open(save_path, "wb") as f:
         while content := await file.read(1024):
             await f.write(content)
+
+
+async def get_project(project_name: str, current_user: Annotated[User, Depends(get_current_user)]):
+    project = await Projects.get_or_none(
+        name = project_name,
+        owner = current_user,
+    )
+    if project is None:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Project does not exist."
+        )
+    await project.fetch_related("owner")
+    return project
