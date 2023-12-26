@@ -1,10 +1,7 @@
-import os
-
-from src import projects
+from src import projects as proj
 from typing import Annotated, List
-from starlette.routing import Mount
 
-from src.projects import get_project
+from starlette.routing import Mount
 from src.models import Users, Projects
 from importlib import import_module, reload
 
@@ -83,7 +80,7 @@ async def create_project(
     project_name: Annotated[str, Form()], 
     project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")], 
     current_user: Annotated[User, Depends(get_current_user)]
-    ):
+    ) -> Project:
     try:
         project = await Projects.create(
             name = project_name,
@@ -98,12 +95,12 @@ async def create_project(
     
     username = current_user.username
 
-    projects.create_project(
+    proj.create_project(
         username = username,
         project_name = project_name
     )
 
-    await projects.save_file(
+    await proj.save_file(
         username = username,
         project_name = project_name, 
         file = project_script,
@@ -117,13 +114,13 @@ async def create_project(
 
 @proj_router.put("/{project_name}")
 async def update_project(
-    project: Annotated[Project, Depends(get_project)], 
+    project: Annotated[Project, Depends(proj.get_project)], 
     project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")], 
-    ):
+    ) -> Project:
     username = project.owner.username
     project_name = project.name
 
-    await projects.save_file(
+    await proj.save_file(
         username = username,
         project_name = project_name, 
         file = project_script,
@@ -131,11 +128,33 @@ async def update_project(
 
     mount_path = f"/{username}/{project_name}"
     unmount_app(path = mount_path)
-    
+
     module = reload(import_module(f"src.users.{username}.{project_name}.app"))
     app.mount(f"/{username}/{project_name}", module.app)
 
     return await Project.from_tortoise_orm(project)
+
+
+@proj_router.delete("/{project_name}")
+async def delete_project(project: Annotated[Project, Depends(proj.get_project)]) -> List[Project]:
+    current_user = project.owner
+    username = current_user.username
+    project_name = project.name
+
+    mount_path = f"/{username}/{project_name}"
+    unmount_app(path = mount_path)
+
+    await project.delete()
+    proj.delete_project(
+        username = username,
+        project_name = project_name,
+    )
+
+    projects = await current_user.projects.all()
+    if not projects:
+        proj.delete_user(username = username)
+
+    return [Project.from_tortoise_orm(project) for project in projects]
 
 
 app.include_router(auth_router)
@@ -148,9 +167,4 @@ register_tortoise(
     add_exception_handlers = True,
 )
 
-
-# @proj_router.delete("/{project}")
-# async def delete_project(username, project):
-#     return f"delete {username} project {project}!"
-
-# TODO: logic to mount and regenerate all the endponts when app restarts
+# TODO: logic to mount and regenerate all the endpoints when app restarts
