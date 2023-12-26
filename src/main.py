@@ -2,13 +2,16 @@ import os
 
 from src import projects
 from typing import Annotated, List
-from importlib import import_module
+from starlette.routing import Mount
 
+from src.projects import get_project
 from src.models import Users, Projects
+from importlib import import_module, reload
+
 from src.schemas import Token, User, Project
 from tortoise.exceptions import IntegrityError
-
 from tortoise.contrib.fastapi import register_tortoise
+
 from fastapi.security import OAuth2PasswordRequestForm
 from src.auth import authenticate_user, create_access_token, pwd_context, get_current_user
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Form, UploadFile, File
@@ -26,6 +29,14 @@ proj_router = APIRouter(
     prefix = "/{username}",
     tags = ["Projects"]
 )
+
+
+def unmount_app(path: str):
+    global app
+    for index, route in enumerate(app.routes):
+        if isinstance(route, Mount) and route.path == path:
+            del app.routes[index]
+            break
 
 
 @auth_router.post("/register")
@@ -104,6 +115,29 @@ async def create_project(
     return await Project.from_tortoise_orm(project)
 
 
+@proj_router.put("/{project_name}")
+async def update_project(
+    project: Annotated[Project, Depends(get_project)], 
+    project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")], 
+    ):
+    username = project.owner.username
+    project_name = project.name
+
+    await projects.save_file(
+        username = username,
+        project_name = project_name, 
+        file = project_script,
+    )
+
+    mount_path = f"/{username}/{project_name}"
+    unmount_app(path = mount_path)
+    
+    module = reload(import_module(f"src.users.{username}.{project_name}.app"))
+    app.mount(f"/{username}/{project_name}", module.app)
+
+    return await Project.from_tortoise_orm(project)
+
+
 app.include_router(auth_router)
 app.include_router(proj_router)
 register_tortoise(
@@ -114,13 +148,9 @@ register_tortoise(
     add_exception_handlers = True,
 )
 
-# @proj_router.put("/{project}")
-# async def update_project(username, project):
-#     return f"update {username} project {project}!"
-
 
 # @proj_router.delete("/{project}")
 # async def delete_project(username, project):
 #     return f"delete {username} project {project}!"
 
-# TODO: logic to mount and regnerate all the endponts when app restarts
+# TODO: logic to mount and regenerate all the endponts when app restarts
