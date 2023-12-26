@@ -1,17 +1,18 @@
-from src import projects as proj
+
 from typing import Annotated, List
-
-from starlette.routing import Mount
-from src.models import Users, Projects
 from importlib import import_module, reload
+from starlette.routing import Mount
 
-from src.schemas import Token, User, Project
 from tortoise.exceptions import IntegrityError
 from tortoise.contrib.fastapi import register_tortoise
 
 from fastapi.security import OAuth2PasswordRequestForm
-from src.auth import authenticate_user, create_access_token, pwd_context, get_current_user
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Form, UploadFile, File
+
+from src import projects as proj
+from src.models import Users, Projects
+from src.schemas import Token, User, Project
+from src.auth import authenticate_user, create_access_token, pwd_context, get_current_user
 
 
 app = FastAPI(
