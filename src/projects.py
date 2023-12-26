@@ -1,4 +1,5 @@
 import os
+import shutil
 import aiofiles
 
 from src.schemas import User
@@ -50,3 +51,13 @@ async def get_project(project_name: str, current_user: Annotated[User, Depends(g
         )
     await project.fetch_related("owner")
     return project
+
+
+def delete_project(username: str, project_name: str):
+    project_dir = os.path.join(USERS_DIR, username, project_name)
+    shutil.rmtree(path = project_dir, ignore_errors = True)
+
+
+def delete_user(username: str):
+    user_dir = os.path.join(USERS_DIR, username)
+    shutil.rmtree(path = user_dir, ignore_errors = True)
