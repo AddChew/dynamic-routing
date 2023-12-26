@@ -1,0 +1,5 @@
+[MAIN]
+
+disable=missing-module-docstring
+
+fail-under=9
