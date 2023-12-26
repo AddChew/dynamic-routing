@@ -30,6 +30,12 @@ proj_router = APIRouter(
 
 
 def unmount_app(path: str):
+    """
+    Remove route from app.
+
+    Args:
+        path (str): Path of route to be removed.
+    """
     global app
     for index, route in enumerate(app.routes):
         if isinstance(route, Mount) and route.path == path:
@@ -39,6 +45,9 @@ def unmount_app(path: str):
 
 @auth_router.post("/register")
 async def register(username: Annotated[str, Form()], password: Annotated[str, Form()]) -> User:
+    """
+    Register new user.
+    """
     try:
         user = await Users.create(
             username = username,
@@ -54,6 +63,9 @@ async def register(username: Annotated[str, Form()], password: Annotated[str, Fo
 
 @auth_router.post("/login", include_in_schema = False)
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+    """
+    Login user and return access token.
+    """
     user = await authenticate_user(
         username = form_data.username,
         password = form_data.password
@@ -72,6 +84,9 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
 
 @proj_router.get("/")
 async def read_projects(current_user: Annotated[User, Depends(get_current_user)]) -> List[Project]:
+    """
+    Read list of projects belonging to current user.
+    """
     projects = await current_user.projects.all()
     return [Project.from_tortoise_orm(project) for project in projects]
 
@@ -82,6 +97,9 @@ async def create_project(
     project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")],
     current_user: Annotated[User, Depends(get_current_user)]
     ) -> Project:
+    """
+    Create a new project.
+    """
     try:
         project = await Projects.create(
             name = project_name,
@@ -118,6 +136,9 @@ async def update_project(
     project: Annotated[Project, Depends(proj.get_project)],
     project_script: Annotated[UploadFile, File(description = "Project app script (i.e. app.py)")],
     ) -> Project:
+    """
+    Update an existing project.
+    """
     username = project.owner.username
     project_name = project.name
 
@@ -138,6 +159,9 @@ async def update_project(
 
 @proj_router.delete("/{project_name}")
 async def delete_project(project: Annotated[Project, Depends(proj.get_project)]) -> List[Project]:
+    """
+    Delete an existing project.
+    """
     current_user = project.owner
     username = current_user.username
     project_name = project.name
