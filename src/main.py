@@ -17,6 +17,9 @@ from src.schemas import Token, User, Project
 from src.auth import authenticate_user, create_access_token, pwd_context, get_current_user
 
 
+ROOT_MODULE = os.getenv("root_module", "src")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -36,7 +39,7 @@ async def lifespan(app: FastAPI):
         project_name = project.name
         username = project.owner.username
 
-        module = import_module(f"src.users.{username}.{project_name}.app")
+        module = import_module(f"{ROOT_MODULE}.users.{username}.{project_name}.app")
         app.mount(f"/{username}/{project_name}", module.app)
 
     yield
@@ -154,7 +157,7 @@ async def create_project(
         file = project_script,
     )
 
-    module = import_module(f"src.users.{username}.{project_name}.app")
+    module = import_module(f"{ROOT_MODULE}.users.{username}.{project_name}.app")
     app.mount(f"/{username}/{project_name}", module.app)
 
     return await Project.from_tortoise_orm(project)
@@ -180,7 +183,7 @@ async def update_project(
     mount_path = f"/{username}/{project_name}"
     unmount_app(path = mount_path)
 
-    module = reload(import_module(f"src.users.{username}.{project_name}.app"))
+    module = reload(import_module(f"{ROOT_MODULE}.users.{username}.{project_name}.app"))
     app.mount(f"/{username}/{project_name}", module.app)
 
     return await Project.from_tortoise_orm(project)
