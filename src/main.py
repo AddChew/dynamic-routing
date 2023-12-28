@@ -76,7 +76,7 @@ def unmount_app(path: str):
 
 
 @auth_router.post("/register")
-async def register(username: Annotated[str, Form()], password: Annotated[str, Form()]) -> User:
+async def register(username: Annotated[str, Form()], password: Annotated[str, Form(format = "password")]) -> User:
     """
     Register new user.
     """
