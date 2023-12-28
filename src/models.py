@@ -29,3 +29,9 @@ class Projects(models.Model):
         Metadata for pydantic model.
         """
         exclude = ["id"]
+
+    class Meta:
+        """
+        Metadata for table.
+        """
+        unique_together = ("name", "owner")
