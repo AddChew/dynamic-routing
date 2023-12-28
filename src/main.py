@@ -1,10 +1,11 @@
 
 from typing import Annotated, List
+from contextlib import asynccontextmanager
 from importlib import import_module, reload
 from starlette.routing import Mount
 
+from tortoise import Tortoise
 from tortoise.exceptions import IntegrityError
-from tortoise.contrib.fastapi import register_tortoise
 
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Form, UploadFile, File
@@ -15,9 +16,30 @@ from src.schemas import Token, User, Project
 from src.auth import authenticate_user, create_access_token, pwd_context, get_current_user
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await Tortoise.init(
+        db_url = "sqlite://db.sqlite3",
+        modules = {"models": ["src.models"]}
+    )
+    await Tortoise.generate_schemas()
+    projects = await Projects.all().prefetch_related("owner")
+
+    for project in projects:
+        project_name = project.name
+        username = project.owner.username
+
+        module = import_module(f"src.users.{username}.{project_name}.app")
+        app.mount(f"/{username}/{project_name}", module.app)
+
+    yield
+    await Tortoise.close_connections()
+    
+
 app = FastAPI(
     title = "Dynamic Routing",
     description = "API Documentation for Dynamic Routing Service.",
+    lifespan = lifespan,
 )
 auth_router = APIRouter(
     prefix = "/auth",
@@ -184,15 +206,8 @@ async def delete_project(project: Annotated[Project, Depends(proj.get_project)])
 
 app.include_router(auth_router)
 app.include_router(proj_router)
-register_tortoise(
-    app,
-    db_url = "sqlite://db.sqlite3",
-    modules = {"models": ["src.models"]},
-    generate_schemas = True,
-    add_exception_handlers = True,
-)
 
-# TODO: logic to mount and regenerate all the endpoints when app restarts
+
 # TODO: pytest unittests
 # TODO: migrate to postgres from sqlite
 # TODO: setup docker and docker compose
