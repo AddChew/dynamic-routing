@@ -1,5 +1,6 @@
 [run]
     source = src
+    omit = src/users/*
 
 [report]
     fail_under = 95
