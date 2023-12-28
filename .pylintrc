@@ -4,3 +4,6 @@ disable=missing-module-docstring,
         fixme
 
 fail-under=9
+
+ignore-paths=tests/,
+             conftest.py
