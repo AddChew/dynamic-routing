@@ -42,3 +42,57 @@ class TestAuthAPI:
             assert response.json() == {
                 "detail": "User already exists."
             }
+
+    def test_login_invalid_username(self):
+        with TestClient(app) as client:
+            response = client.post(
+                self.login_route, 
+                data = {
+                    "username": "test_invalid_user",
+                    "password": "test_password",
+            })
+            assert response.status_code == 401
+            assert response.json() == {
+                "detail": "Incorrect username or password."
+            }
+
+    def test_login_invalid_password(self):
+        with TestClient(app) as client:
+            client.post(
+                self.register_route, 
+                data = {
+                    "username": "test_user",
+                    "password": "test_invalid_password",
+            })
+
+            response = client.post(
+                self.login_route, 
+                data = {
+                    "username": "test_user",
+                    "password": "test_password",
+            })
+            assert response.status_code == 401
+            assert response.json() == {
+                "detail": "Incorrect username or password."
+            }
+
+    def test_login_valid_user(self):
+        with TestClient(app) as client:
+            client.post(
+                self.register_route, 
+                data = {
+                    "username": "test_valid_user",
+                    "password": "test_valid_password",
+            })
+
+            response = client.post(
+                self.login_route, 
+                data = {
+                    "username": "test_valid_user",
+                    "password": "test_valid_password",
+            })
+            assert response.status_code == 200
+
+            json_response = response.json()
+            assert json_response["token_type"] == "bearer"
+            assert "access_token" in json_response
