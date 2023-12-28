@@ -2,6 +2,6 @@
     source = src
 
 [report]
-    fail_under = 90
+    fail_under = 95
     skip_covered = true
     show_missing = true
