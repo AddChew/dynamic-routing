@@ -18,6 +18,12 @@ from src.auth import authenticate_user, create_access_token, pwd_context, get_cu
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Setup and tear down Tortoise-ORM inside a FastAPI app, upon app start up and shut down events.
+    
+    Args:
+        app (FastAPI): FastAPI app to bind Tortoise-ORM to.
+    """
     await Tortoise.init(
         db_url = "sqlite://db.sqlite3",
         modules = {"models": ["src.models"]}
@@ -34,7 +40,7 @@ async def lifespan(app: FastAPI):
 
     yield
     await Tortoise.close_connections()
-    
+
 
 app = FastAPI(
     title = "Dynamic Routing",
