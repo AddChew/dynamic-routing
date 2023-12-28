@@ -1,3 +1,4 @@
+import os
 
 from typing import Annotated, List
 from contextlib import asynccontextmanager
@@ -25,7 +26,7 @@ async def lifespan(app: FastAPI):
         app (FastAPI): FastAPI app to bind Tortoise-ORM to.
     """
     await Tortoise.init(
-        db_url = "sqlite://db.sqlite3",
+        db_url = os.getenv("db_url", "sqlite://db.sqlite3"),
         modules = {"models": ["src.models"]}
     )
     await Tortoise.generate_schemas()
