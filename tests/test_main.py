@@ -125,7 +125,7 @@ class TestProjectsAPI:
             if os.path.isdir(path):
                 shutil.rmtree(path, ignore_errors = True)
 
-    def test_unauth_create_project(self):
+    def test_unauthorized(self):
         with TestClient(app) as client, open(self.project_script_1, "rb") as f:
             response = client.post(
                 "/test_user", 
@@ -137,7 +137,7 @@ class TestProjectsAPI:
                 "detail": "Not authenticated"
             }
 
-    def test_insufficient_permissions_create_project(self):
+    def test_insufficient_permissions(self):
         with TestClient(app) as client, open(self.project_script_1, "rb") as f:
             access_token = login_user(client)
             response = client.post(
@@ -198,3 +198,24 @@ class TestProjectsAPI:
             )
             assert response.status_code == 409
             assert response.json() == {"detail": "Project already exists."}
+
+    def test_read_projects(self):
+        with TestClient(app) as client, open(self.project_script_1, "rb") as f:
+            access_token = login_user(client)
+            client.post(
+                "/test_user",
+                headers = {"Authorization": f"Bearer {access_token}"},
+                data = {"project_name": "test_project"},
+                files = {"project_script": f},
+            )
+            response = client.get(
+                "/test_user",
+                headers = {"Authorization": f"Bearer {access_token}"},
+            )
+            assert response.status_code == 200
+            assert response.json() == [{
+                "name": "test_project",
+                "owner": {
+                    "username": "test_user"
+                }
+            }]
