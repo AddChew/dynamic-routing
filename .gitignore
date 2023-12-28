@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # User uploaded scripts
-users/
+src/users/
