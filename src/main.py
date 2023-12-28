@@ -120,7 +120,7 @@ async def read_projects(current_user: Annotated[User, Depends(get_current_user)]
     Read list of projects belonging to current user.
     """
     projects = await current_user.projects.all()
-    return [Project.from_tortoise_orm(project) for project in projects]
+    return [await Project.from_tortoise_orm(project) for project in projects]
 
 
 @proj_router.post("/")
