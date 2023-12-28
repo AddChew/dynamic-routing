@@ -137,6 +137,20 @@ class TestProjectsAPI:
                 "detail": "Not authenticated"
             }
 
+    def test_insufficient_permissions_create_project(self):
+        with TestClient(app) as client, open(self.project_script_1, "rb") as f:
+            access_token = login_user(client)
+            response = client.post(
+                "/test_user_insufficient_permissions",
+                headers = {"Authorization": f"Bearer {access_token}"},
+                data = {"project_name": "test_project"},
+                files = {"project_script": f},
+            )
+            assert response.status_code == 401
+            assert response.json() == {
+                "detail": "Insufficient permissions."
+            }
+
     def test_create_new_project(self, monkeypatch_users_dir):
         with TestClient(app) as client, open(self.project_script_1, "rb") as f:
             access_token = login_user(client)
