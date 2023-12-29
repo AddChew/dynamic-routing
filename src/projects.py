@@ -10,7 +10,7 @@ from src.models import Projects
 from src.auth import get_current_user
 
 
-USERS_DIR = os.path.join(os.path.abspath(os.path.dirname(os.path.abspath(__file__))), "users")
+users_dir = os.path.join(os.path.abspath(os.path.dirname(os.path.abspath(__file__))), "users")
 
 
 def create_project(username: str, project_name: str):
@@ -21,7 +21,7 @@ def create_project(username: str, project_name: str):
         username (str): Username of project owner.
         project_name (str): Name of project.
     """
-    user_dir = os.path.join(USERS_DIR, username)
+    user_dir = os.path.join(users_dir, username)
     project_dir = os.path.join(user_dir, project_name)
 
     os.makedirs(project_dir, exist_ok = True)
@@ -48,7 +48,7 @@ async def save_file(username: str, project_name: str, file: UploadFile):
         project_name (str): Name of project.
         file (UploadFile): Uploaded file.
     """
-    save_path = os.path.join(USERS_DIR, username, project_name, "app.py")
+    save_path = os.path.join(users_dir, username, project_name, "app.py")
     async with aiofiles.open(save_path, "wb") as f:
         while content := await file.read(1024):
             await f.write(content)
@@ -89,7 +89,7 @@ def delete_project(username: str, project_name: str):
         username (str): Username of project owner.
         project_name (str): Name of project to delete.
     """
-    project_dir = os.path.join(USERS_DIR, username, project_name)
+    project_dir = os.path.join(users_dir, username, project_name)
     shutil.rmtree(path = project_dir, ignore_errors = True)
 
 
@@ -100,5 +100,5 @@ def delete_user(username: str):
     Args:
         username (str): Name of folder to delete.
     """
-    user_dir = os.path.join(USERS_DIR, username)
+    user_dir = os.path.join(users_dir, username)
     shutil.rmtree(path = user_dir, ignore_errors = True)
