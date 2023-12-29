@@ -17,7 +17,19 @@ from src.schemas import Token, User, Project
 from src.auth import authenticate_user, create_access_token, pwd_context, get_current_user
 
 
-ROOT_MODULE = os.getenv("root_module", "src")
+root = "src"
+config = {
+    "connections": {
+        "dev": "sqlite://db.sqlite3",
+        "tests": "sqlite://:memory:",
+    },
+    "apps": {
+        "models": {
+            "models": ["src.models"],
+            "default_connection": os.getenv("env", "dev")
+        }
+    }
+}
 
 
 @asynccontextmanager
@@ -28,10 +40,7 @@ async def lifespan(app: FastAPI):
     Args:
         app (FastAPI): FastAPI app to bind Tortoise-ORM to.
     """
-    await Tortoise.init(
-        db_url = os.getenv("db_url", "sqlite://db.sqlite3"),
-        modules = {"models": ["src.models"]}
-    )
+    await Tortoise.init(config = config)
     await Tortoise.generate_schemas()
     projects = await Projects.all().prefetch_related("owner")
 
@@ -39,7 +48,7 @@ async def lifespan(app: FastAPI):
         project_name = project.name
         username = project.owner.username
 
-        module = import_module(f"{ROOT_MODULE}.users.{username}.{project_name}.app")
+        module = import_module(f"{root}.users.{username}.{project_name}.app")
         app.mount(f"/{username}/{project_name}", module.app)
 
     yield
@@ -157,7 +166,7 @@ async def create_project(
         file = project_script,
     )
 
-    module = import_module(f"{ROOT_MODULE}.users.{username}.{project_name}.app")
+    module = import_module(f"{root}.users.{username}.{project_name}.app")
     app.mount(f"/{username}/{project_name}", module.app)
 
     return await Project.from_tortoise_orm(project)
@@ -183,7 +192,7 @@ async def update_project(
     mount_path = f"/{username}/{project_name}"
     unmount_app(path = mount_path)
 
-    module = reload(import_module(f"{ROOT_MODULE}.users.{username}.{project_name}.app"))
+    module = reload(import_module(f"{root}.users.{username}.{project_name}.app"))
     app.mount(f"/{username}/{project_name}", module.app)
 
     return await Project.from_tortoise_orm(project)
