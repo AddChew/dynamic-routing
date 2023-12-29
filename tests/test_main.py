@@ -200,7 +200,7 @@ class TestProjectsAPI:
             assert response.status_code == 409
             assert response.json() == {"detail": "Project already exists."}
 
-    def test_read_projects(self):
+    def test_read_projects(self, monkeypatch_root, monkeypatch_users_dir):
         with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             client.post(
