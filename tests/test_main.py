@@ -118,8 +118,7 @@ class TestProjectsAPI:
         scripts_dir = os.path.join(tests_dir, "scripts")
 
         self.users_dir = os.path.join(tests_dir, "users")
-        self.project_script_1 = os.path.join(scripts_dir, "demo_app1.py")
-        self.project_script_2 = os.path.join(scripts_dir, "demo_app2.py")
+        self.project_script = os.path.join(scripts_dir, "demo_app.py")
 
     def teardown_method(self):
         for item in os.listdir(self.users_dir):
@@ -128,7 +127,7 @@ class TestProjectsAPI:
                 shutil.rmtree(path, ignore_errors = True)
 
     def test_unauthorized(self):
-        with TestClient(app) as client, open(self.project_script_1, "rb") as f:
+        with TestClient(app) as client, open(self.project_script, "rb") as f:
             response = client.post(
                 "/test_user", 
                 data = {"project_name": "test_project"},
@@ -140,7 +139,7 @@ class TestProjectsAPI:
             }
 
     def test_insufficient_permissions(self):
-        with TestClient(app) as client, open(self.project_script_1, "rb") as f:
+        with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             response = client.post(
                 "/test_user_insufficient_permissions",
@@ -154,7 +153,7 @@ class TestProjectsAPI:
             }
 
     def test_create_new_project(self, monkeypatch_users_dir):
-        with TestClient(app) as client, open(self.project_script_1, "rb") as f:
+        with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             response = client.post(
                 "/test_user",
@@ -183,7 +182,7 @@ class TestProjectsAPI:
             assert response.json() == "index!"
 
     def test_create_existing_project(self, monkeypatch_users_dir):
-        with TestClient(app) as client, open(self.project_script_1, "rb") as f:
+        with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             client.post(
                 "/test_user",
@@ -202,7 +201,7 @@ class TestProjectsAPI:
             assert response.json() == {"detail": "Project already exists."}
 
     def test_read_projects(self):
-        with TestClient(app) as client, open(self.project_script_1, "rb") as f:
+        with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             client.post(
                 "/test_user",
@@ -224,21 +223,20 @@ class TestProjectsAPI:
 
     def test_update_project(self, monkeypatch_users_dir):
         with TestClient(app) as client, \
-            open(self.project_script_1, "rb") as f1, \
-            open(self.project_script_2, "rb") as f2:
+            open(self.project_script, "rb") as f:
 
             access_token = login_user(client)
             response = client.post(
                 "/test_user",
                 headers = {"Authorization": f"Bearer {access_token}"},
                 data = {"project_name": "test_project"},
-                files = {"project_script": f1},
+                files = {"project_script": f},
             )
-            
+
             response = client.put(
                 "/test_user/test_project",
                 headers = {"Authorization": f"Bearer {access_token}"},
-                files = {"project_script": f2},
+                files = {"project_script": f},
             )
             assert response.status_code == 200
             assert response.json() == {
