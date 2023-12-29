@@ -218,7 +218,6 @@ app.include_router(auth_router)
 app.include_router(proj_router)
 
 
-# TODO: pytest unittests
 # TODO: migrate to postgres from sqlite
 # TODO: setup docker and docker compose
 # TODO: update readme

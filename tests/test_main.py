@@ -221,10 +221,21 @@ class TestProjectsAPI:
                 }
             }]
 
-    def test_update_project(self, monkeypatch_users_dir):
-        with TestClient(app) as client, \
-            open(self.project_script, "rb") as f:
+    def test_update_non_existing_project(self, monkeypatch_users_dir):
+        with TestClient(app) as client, open(self.project_script, "rb") as f:
+            access_token = login_user(client)
+            response = client.put(
+                "/test_user/test_project",
+                headers = {"Authorization": f"Bearer {access_token}"},
+                files = {"project_script": f},
+            )
+            assert response.status_code == 404
+            assert response.json() == {
+                "detail": "Project does not exist."
+            }
 
+    def test_update_existing_project(self, monkeypatch_users_dir):
+        with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             response = client.post(
                 "/test_user",
@@ -245,3 +256,22 @@ class TestProjectsAPI:
                     "username": "test_user"
                 }
             }
+
+    def test_delete_project(self, monkeypatch_users_dir):
+        with TestClient(app) as client, \
+            open(self.project_script, "rb") as f:
+
+            access_token = login_user(client)
+            response = client.post(
+                "/test_user",
+                headers = {"Authorization": f"Bearer {access_token}"},
+                data = {"project_name": "test_project"},
+                files = {"project_script": f},
+            )
+
+            response = client.delete(
+                "/test_user/test_project",
+                headers = {"Authorization": f"Bearer {access_token}"},
+            )
+            assert response.status_code == 200
+            assert response.json() == []
