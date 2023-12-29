@@ -2,8 +2,7 @@ import os
 import pytest
 
 
-os.environ["db_url"] = "sqlite://:memory:"
-os.environ["root_module"] = "tests"
+os.environ["env"] = "tests"
 
 
 @pytest.fixture
