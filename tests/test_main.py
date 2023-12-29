@@ -1,4 +1,5 @@
 import os
+import time
 import shutil
 
 from fastapi.testclient import TestClient
@@ -118,6 +119,7 @@ class TestProjectsAPI:
 
         self.users_dir = os.path.join(tests_dir, "users")
         self.project_script_1 = os.path.join(scripts_dir, "demo_app1.py")
+        self.project_script_2 = os.path.join(scripts_dir, "demo_app2.py")
 
     def teardown_method(self):
         for item in os.listdir(self.users_dir):
@@ -219,3 +221,29 @@ class TestProjectsAPI:
                     "username": "test_user"
                 }
             }]
+
+    def test_update_project(self, monkeypatch_users_dir):
+        with TestClient(app) as client, \
+            open(self.project_script_1, "rb") as f1, \
+            open(self.project_script_2, "rb") as f2:
+
+            access_token = login_user(client)
+            response = client.post(
+                "/test_user",
+                headers = {"Authorization": f"Bearer {access_token}"},
+                data = {"project_name": "test_project"},
+                files = {"project_script": f1},
+            )
+            
+            response = client.put(
+                "/test_user/test_project",
+                headers = {"Authorization": f"Bearer {access_token}"},
+                files = {"project_script": f2},
+            )
+            assert response.status_code == 200
+            assert response.json() == {
+                "name": "test_project",
+                "owner": {
+                    "username": "test_user"
+                }
+            }
