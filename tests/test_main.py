@@ -152,7 +152,7 @@ class TestProjectsAPI:
                 "detail": "Insufficient permissions."
             }
 
-    def test_create_new_project(self, monkeypatch_users_dir):
+    def test_create_new_project(self, monkeypatch_root, monkeypatch_users_dir):
         with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             response = client.post(
@@ -181,7 +181,7 @@ class TestProjectsAPI:
             assert response.status_code == 200
             assert response.json() == "index!"
 
-    def test_create_existing_project(self, monkeypatch_users_dir):
+    def test_create_existing_project(self, monkeypatch_root, monkeypatch_users_dir):
         with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             client.post(
@@ -221,7 +221,7 @@ class TestProjectsAPI:
                 }
             }]
 
-    def test_update_non_existing_project(self, monkeypatch_users_dir):
+    def test_update_non_existing_project(self, monkeypatch_root, monkeypatch_users_dir):
         with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             response = client.put(
@@ -234,7 +234,7 @@ class TestProjectsAPI:
                 "detail": "Project does not exist."
             }
 
-    def test_update_existing_project(self, monkeypatch_users_dir):
+    def test_update_existing_project(self, monkeypatch_root, monkeypatch_users_dir):
         with TestClient(app) as client, open(self.project_script, "rb") as f:
             access_token = login_user(client)
             response = client.post(
@@ -257,7 +257,7 @@ class TestProjectsAPI:
                 }
             }
 
-    def test_delete_project(self, monkeypatch_users_dir):
+    def test_delete_project(self, monkeypatch_root, monkeypatch_users_dir):
         with TestClient(app) as client, \
             open(self.project_script, "rb") as f:
 
