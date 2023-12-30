@@ -20,8 +20,8 @@ from src.auth import authenticate_user, create_access_token, pwd_context, get_cu
 root = "src"
 config = {
     "connections": {
-        "dev": "sqlite://db.sqlite3",
-        "prod": {
+        "local": "sqlite://db.sqlite3",
+        "docker": {
             "engine": "tortoise.backends.asyncpg",
             "credentials": {
                 "database": os.getenv("POSTGRES_DB", "postgres"),
@@ -36,7 +36,7 @@ config = {
     "apps": {
         "models": {
             "models": ["src.models"],
-            "default_connection": os.getenv("ENV", "dev")
+            "default_connection": os.getenv("ENV", "local")
         }
     }
 }
