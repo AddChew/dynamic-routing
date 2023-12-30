@@ -26,7 +26,7 @@ config = {
     "apps": {
         "models": {
             "models": ["src.models"],
-            "default_connection": os.getenv("env", "dev")
+            "default_connection": os.getenv("ENV", "dev")
         }
     }
 }

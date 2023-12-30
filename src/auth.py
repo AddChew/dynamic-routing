@@ -1,3 +1,5 @@
+import os
+
 from typing import Annotated
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
@@ -11,7 +13,7 @@ from src.models import Users
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-SECRET_KEY = "401be69b6314c2abcd9a0a9a2f52a09a4777f132a10f9e3cd6885fe8c126bfe6"
+SECRET_KEY = os.getenv("SECRET_KEY", "tests")
 
 
 pwd_context = CryptContext(
