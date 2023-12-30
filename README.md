@@ -30,23 +30,29 @@ Built with:
 
 1. Navigate to the project root folder (i.e. dynamic-routing)
 
-2. Install the necessary dependencies
+2. Create and activate conda environment
+```shell
+conda create -n dynamic-routing-tests python=3.10 -y
+conda activate dynamic-routing-tests
+```
+
+3. Install the necessary dependencies
 ```shell
 pip install -r deploy/src/requirements.txt
 pip install pylint pytest coverage httpx
 ```
 
-3. Run code quality checks
+4. Run code quality checks
 ```shell
 pylint $(git ls-files '*.py')
 ```
 
-4. Run unittests
+5. Run unittests
 ```shell
 coverage run -m pytest -v
 ```
 
-5. Run code coverage
+6. Run code coverage
 ```shell
 coverage report -m
 ```
