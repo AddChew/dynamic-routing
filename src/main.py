@@ -237,8 +237,3 @@ async def delete_project(project: Annotated[Project, Depends(proj.get_project)])
 
 app.include_router(auth_router)
 app.include_router(proj_router)
-
-
-# TODO: migrate to postgres from sqlite
-# TODO: setup docker and docker compose
-# TODO: update readme
