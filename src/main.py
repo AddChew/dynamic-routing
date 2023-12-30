@@ -21,6 +21,16 @@ root = "src"
 config = {
     "connections": {
         "dev": "sqlite://db.sqlite3",
+        "prod": {
+            "engine": "tortoise.backends.asyncpg",
+            "credentials": {
+                "database": os.getenv("POSTGRES_DB", "postgres"),
+                "host": os.getenv("POSTGRES_HOST", "localhost"),
+                "password": os.getenv("POSTGRES_PASSWORD", "postgres"),
+                "port": 5432,
+                "user": os.getenv("POSTGRES_USER", "postgres"),
+            }
+        },
         "tests": "sqlite://:memory:",
     },
     "apps": {
