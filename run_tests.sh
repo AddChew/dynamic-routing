@@ -3,7 +3,7 @@
 test_env=dynamic-routing-tests
 
 if ! conda env list | grep $test_env >/dev/null 2>&1; then
-    conda create -n dynamic-routing-tests python=3.10 -y
+    conda create -n $test_env python=3.10 -y
 fi;
 
 source activate $test_env
