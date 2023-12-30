@@ -10,9 +10,21 @@ Built with:
 * Tortoise ORM
 * PostgreSQL
 
-## Context
+## Motivation
 
-## Project setup
+## Demo
+
+## How the app works
+
+## Installation
+
+#### Run via docker compose
+
+#### Run locally
+
+## Usage
+
+## Limitations
 
 ## How to run tests
 
