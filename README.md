@@ -28,31 +28,7 @@ Built with:
 
 ## How to run tests
 
-1. Navigate to the project root folder (i.e. dynamic-routing)
-
-2. Create and activate conda environment
+From project root folder (i.e. dynamic-routing), execute the following command:
 ```shell
-conda create -n dynamic-routing-tests python=3.10 -y
-conda activate dynamic-routing-tests
-```
-
-3. Install the necessary dependencies
-```shell
-pip install -r deploy/src/requirements.txt
-pip install pylint pytest coverage httpx
-```
-
-4. Run code quality checks
-```shell
-pylint $(git ls-files '*.py')
-```
-
-5. Run unittests
-```shell
-coverage run -m pytest -v
-```
-
-6. Run code coverage
-```shell
-coverage report -m
+./run_tests.sh
 ```
