@@ -20,6 +20,22 @@ Built with:
 
 #### Run via docker compose
 
+1. Set POSTGRES_PASSWORD environment variable
+```shell
+export POSTGRES_PASSWORD=<your postgres password>
+```
+
+2. From project root folder (i.e. dynamic-routing), run the following command:
+```
+./docker_setup.sh
+```
+
+3. Navigate to the following urls to access the respective services:
+| URL                              | Service       |
+| -------------------------------- |-------------- |
+| http://localhost:8000/docs       | SwaggerUI     |
+| http://localhost:8000/redoc      | Redoc         |
+
 #### Run locally
 
 ## Usage

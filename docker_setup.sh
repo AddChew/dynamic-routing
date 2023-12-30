@@ -8,4 +8,4 @@ POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 POSTGRES_USER=postgres"
 
 echo -n "$env_vars" > deploy/.env
-docker compose up -d --build
+docker compose -f deploy/docker-compose.yml up -d --build
