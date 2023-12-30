@@ -31,6 +31,7 @@ export POSTGRES_PASSWORD=<your postgres password>
 ```
 
 3. Navigate to the following urls to access the respective services:
+
 | URL                              | Service       |
 | -------------------------------- |-------------- |
 | http://localhost:8000/docs       | SwaggerUI     |
