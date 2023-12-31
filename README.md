@@ -39,6 +39,18 @@ export POSTGRES_PASSWORD=<your postgres password>
 
 #### Run locally
 
+1. From project root folder (i.e. dynamic-routing), run the following command:
+```
+./local_setup.sh
+```
+
+2. Navigate to the following urls to access the respective services:
+
+| URL                              | Service       |
+| -------------------------------- |-------------- |
+| http://localhost:8000/docs       | SwaggerUI     |
+| http://localhost:8000/redoc      | Redoc         |
+
 ## Usage
 
 ## Limitations
