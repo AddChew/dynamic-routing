@@ -57,7 +57,7 @@ export POSTGRES_PASSWORD=<your postgres password>
 
 ## Usage
 
-Navigate to http://localhost:8000/docs to access the Swagger UI, which we will be using to call the APIs. Refer to the demo video on how to use the other endpoints.
+Launch the application via one of the two installation methods. Navigate to http://localhost:8000/docs to access the Swagger UI, which we will be using to call the APIs. Refer to the demo video on how to use the APIs.
 
 ## Limitations
 
