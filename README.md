@@ -16,6 +16,8 @@ The UAT environment has insufficient compute resources for every machine learnin
 
 ## Demo
 
+[<img src="https://img.youtube.com/vi/oE6rSg_bYoU/maxresdefault.jpg">](https://youtu.be/oE6rSg_bYoU)
+
 ## How the app works
 
 Each uploaded script functions as an independent sub application, with its own authorization method and Swagger UI, mounted onto the main application at the path /{username}/{project_name}.
