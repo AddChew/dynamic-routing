@@ -57,15 +57,7 @@ export POSTGRES_PASSWORD=<your postgres password>
 
 ## Usage
 
-1. Navigate to http://localhost:8000/docs to access the Swagger UI, which we will be using to call the APIs.
-  
-2. For first time users, register yourself as a new user via the /auth/register endpoint. Click on POST /auth/register panel, and then click on the Try it out button. Input your desired username and password into the form and then click Execute.
-![register](https://github.com/AddChew/dynamic-routing/assets/56240071/feebab25-3183-49f1-8c2a-9462ef4f1bd6)
-
-3. Login user via the OAuth form. Click on the Authorize button on the top right side of the page. Input your username and password and then click on Authorize. Click on the Close button to close the OAuth form.
-![login1](https://github.com/AddChew/dynamic-routing/assets/56240071/e48d969a-f417-40ec-9c43-d7112dd323fc)
-![login2](https://github.com/AddChew/dynamic-routing/assets/56240071/45e96dca-0c89-4b27-91c3-2d22427fb2c9)
-![login3](https://github.com/AddChew/dynamic-routing/assets/56240071/9340e48d-a2f1-469a-9054-950504613cff)
+Navigate to http://localhost:8000/docs to access the Swagger UI, which we will be using to call the APIs. Refer to the demo video on how to use the other endpoints.
 
 ## Limitations
 
