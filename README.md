@@ -61,6 +61,14 @@ export POSTGRES_PASSWORD=<your postgres password>
 
 Each sub application can only use libraries that are installed in the shared conda environment. This could be resolved by building the main application with [Ray Serve](https://docs.ray.io/en/latest/ray-core/handling-dependencies.html), which supports independent runtime environments per serve deployment.
 
+#### Single app file
+
+All of the logic of a sub application has to be confined within one file (i.e. app.py). In most cases, this should suffice, given that each sub application only hosts mock APIs with simple logic.
+
+#### Fixed variable name for FastAPI app
+
+The FastAPI app variable in each sub application has to be named "app" (i.e. app = FastAPI()).
+
 ## How to run tests
 
 From project root folder (i.e. dynamic-routing), execute the following command:
