@@ -16,6 +16,8 @@ Built with:
 
 ## How the app works
 
+Each uploaded script functions as an independent sub application, with its own authorization method and Swagger UI, mounted onto the main application at the path /{username}/{project_name}.
+
 ## Installation
 
 #### Run via docker compose
