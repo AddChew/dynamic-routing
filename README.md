@@ -57,6 +57,10 @@ export POSTGRES_PASSWORD=<your postgres password>
 
 ## Limitations
 
+#### Shared conda environment
+
+Each sub application can only use libraries that are installed in the shared conda environment. This could be resolved by building the main application with [Ray Serve](https://docs.ray.io/en/latest/ray-core/handling-dependencies.html), which supports independent runtime environments per serve deployment.
+
 ## How to run tests
 
 From project root folder (i.e. dynamic-routing), execute the following command:
