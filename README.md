@@ -15,6 +15,8 @@ Built with:
 The UAT environment has insufficient compute resources for every machine learning model to host its own separate model serving application. In most cases, only a mock model serving API is required for integration tests. One potential solution is to have a centralized application to host all the mock model serving APIs. This project thus seeks to provide a centralized mock API hosting application, with an admin service, that allows users to self-service the management of their mock APIs (i.e. add, edit, remove) without having to restart the main application.
 
 ## Demo
+![register](https://github.com/AddChew/dynamic-routing/assets/56240071/feebab25-3183-49f1-8c2a-9462ef4f1bd6)
+
 
 ## How the app works
 
